@@ -1,0 +1,112 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-dll:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+    
+    - name: Setup CMake
+      uses: lukka/get-cmake@latest
+    
+    - name: Create build directory
+      run: |
+        mkdir source/dll/build
+        cd source/dll/build
+    
+    - name: Configure CMake
+      run: |
+        cd source/dll/build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+    
+    - name: Build DLL
+      run: |
+        cd source/dll/build
+        cmake --build . --config Release
+    
+    - name: Upload DLL artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ABNT2_Fix-dll
+        path: source/dll/build/bin/Release/ABNT2_Fix.dll
+        if-no-files-found: error
+
+  build-ahk:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download AutoHotkey
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.11/AutoHotkey_2.0.11.zip" -OutFile "ahk.zip"
+        Expand-Archive -Path "ahk.zip" -DestinationPath "ahk"
+    
+    - name: Compile AutoHotkey Script
+      run: |
+        ./ahk/Compiler/Ahk2Exe.exe /in "source/ahk/cyberpunk2077_abnt2_fix.ahk" /out "cyberpunk2077_abnt2_fix.exe" /compress 1
+    
+    - name: Upload AHK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ABNT2_Fix-exe
+        path: cyberpunk2077_abnt2_fix.exe
+        if-no-files-found: error
+
+  test:
+    needs: [build-dll, build-ahk]
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+    
+    - name: Verify artifacts
+      run: |
+        if (!(Test-Path "artifacts/ABNT2_Fix-dll/ABNT2_Fix.dll")) {
+          Write-Error "DLL not found"
+          exit 1
+        }
+        if (!(Test-Path "artifacts/ABNT2_Fix-exe/cyberpunk2077_abnt2_fix.exe")) {
+          Write-Error "EXE not found"  
+          exit 1
+        }
+        Write-Host "All artifacts verified successfully"
+    
+    - name: Calculate checksums
+      run: |
+        $dllHash = Get-FileHash "artifacts/ABNT2_Fix-dll/ABNT2_Fix.dll" -Algorithm SHA256
+        $exeHash = Get-FileHash "artifacts/ABNT2_Fix-exe/cyberpunk2077_abnt2_fix.exe" -Algorithm SHA256
+        
+        Write-Host "DLL SHA256: $($dllHash.Hash)"
+        Write-Host "EXE SHA256: $($exeHash.Hash)"
+        
+        # Save hashes for potential release use
+        $checksums = @"
+        ABNT2_Fix.dll: $($dllHash.Hash)
+        cyberpunk2077_abnt2_fix.exe: $($exeHash.Hash)
+        "@
+        
+        $checksums | Out-File -FilePath "checksums.txt" -Encoding utf8
+    
+    - name: Upload checksums
+      uses: actions/upload-artifact@v4
+      with:
+        name: checksums
+        path: checksums.txt

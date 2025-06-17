@@ -1,0 +1,93 @@
+# Build logs
+*.log
+build/
+bin/
+
+# Visual Studio files
+.vs/
+*.user
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+[Bb]in
+[Dd]ebug*/
+*.lib
+*.sbr
+obj/
+[Rr]elease*/
+_ReSharper*/
+[Tt]est[Rr]esult*
+*.vssscc
+$tf*/
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# AutoHotkey compiled files
+*.exe
+*.com
+
+# Temporary files
+*.tmp
+*.temp
+~*
+
+# Windows thumbnails
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Package files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Dependencies (add specific paths if needed)
+external/RED4ext.SDK/
+node_modules/
+
+# Release artifacts (keep source, ignore built binaries)
+dist/
+release/
