@@ -1,7 +1,7 @@
 # Cyberpunk 2077 ABNT2 Keyboard Fix
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Release](https://img.shields.io/github/v/release/lordekeen/cyberpunk2077-abnt2-fix)](https://github.com/lordekeen/cyberpunk2077-abnt2-fix/releases)
+[![Release](https://img.shields.io/github/v/release/lordekeen/c2077_abnt2_fix)](https://github.com/lordekeen/c2077_abnt2_fix/releases)
 [![Platform](https://img.shields.io/badge/platform-Windows-blue.svg)]()
 [![Game Version](https://img.shields.io/badge/Cyberpunk%202077-Compatible-green.svg)]()
 
@@ -21,7 +21,7 @@ Este mod corrige problemas de teclado ABNT2 no Cyberpunk 2077, permitindo que jo
 
 ### Instalação Manual (Recomendado)
 
-1. Baixe a versão mais recente na seção [Releases](https://github.com/lordekeen/cyberpunk2077-abnt2-fix/releases)
+1. Baixe a versão mais recente na seção [Releases](https://github.com/lordekeen/c2077_abnt2_fix/releases)
 2. Extraia os arquivos para a pasta `Cyberpunk 2077\red4ext\plugins\ABNT2_Fix\`
 3. O mod será carregado automaticamente quando o jogo iniciar
 
@@ -110,7 +110,7 @@ Todos os arquivos de release incluem checksums SHA256 para verificação de inte
 
 ## 🐛 Relatório de Bugs
 
-Encontrou um problema? Por favor, [abra uma issue](https://github.com/lordekeen/cyberpunk2077-abnt2-fix/issues) com:
+Encontrou um problema? Por favor, [abra uma issue](https://github.com/lordekeen/c2077_abnt2_fix/issues) com:
 
 1. Versão do mod
 2. Versão do Cyberpunk 2077
