@@ -91,3 +91,8 @@ node_modules/
 # Release artifacts (keep source, ignore built binaries)
 dist/
 release/
+
+# NexusMods specific files (not for GitHub repository)
+NEXUS_MODS_PAGE.md
+NEXUS_CONFIG.md
+release_manual/
