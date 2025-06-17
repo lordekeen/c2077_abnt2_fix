@@ -95,11 +95,6 @@ Este projeto é **100% open source** para garantir transparência e confiança d
 - **Código Fonte Disponível**: Todo o código está disponível neste repositório
 - **Sem Malware**: O código pode ser auditado por qualquer pessoa
 - **Builds Reproduzíveis**: Você pode compilar o mod a partir do código fonte
-- **Assinatura Digital**: Releases oficiais são assinadas (quando aplicável)
-
-### Verificação de Integridade
-
-Todos os arquivos de release incluem checksums SHA256 para verificação de integridade.
 
 ## 📋 Compatibilidade
 
