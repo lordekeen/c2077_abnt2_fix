@@ -23,15 +23,41 @@ log(msg) {
     FileAppend "[" A_Now "] " msg "`n", logFile, "UTF-8"
 }
 
+; Clear previous log and start fresh for this session (only if file exists)
+if FileExist(logFile)
+    FileDelete logFile
 log("Script started. Waiting for " gameExe "...") ; Log script startup and waiting status
 
 Loop {
     if ProcessExist(gameExe) {
         log("Detected Cyberpunk 2077 running. Enabling key remapping.") ; Log when the game is detected and remapping is enabled
         Hotkey("*" keyVK, SendEnglishQuestion, "On")
+        
+        ; Enable accent and vowel hotkeys only while game is running
+        Hotkey("*´", HandleAccentAcute, "On")
+        Hotkey("*~", HandleAccentTilde, "On") 
+        Hotkey("*^", HandleAccentCircumflex, "On")
+        Hotkey("~*a", HandleVowelA, "On")
+        Hotkey("~*e", HandleVowelE, "On")
+        Hotkey("~*i", HandleVowelI, "On")
+        Hotkey("~*o", HandleVowelO, "On")
+        Hotkey("~*u", HandleVowelU, "On")
+        
         ; Wait while the game is running
         while ProcessExist(gameExe)
             Sleep 200
+            
+        ; Disable all hotkeys when game closes
+        Hotkey("*" keyVK, "Off")
+        Hotkey("*´", "Off")
+        Hotkey("*~", "Off")
+        Hotkey("*^", "Off")
+        Hotkey("~*a", "Off")
+        Hotkey("~*e", "Off")
+        Hotkey("~*i", "Off")
+        Hotkey("~*o", "Off")
+        Hotkey("~*u", "Off")
+        
         log("Cyberpunk 2077 closed. Shutting down script.") ; Log when the game closes and script is about to exit
         ExitApp
     }
@@ -40,50 +66,62 @@ Loop {
 
 SendEnglishQuestion(*) {
     if GetKeyState("Shift") {
-        origClip := ClipboardAll() ; Save original clipboard
+        A_Clipboard := "" ; clear clipboard before setting new value
+        Sleep 10 ; short delay to ensure clipboard is clear
         A_Clipboard := "?"
-        Sleep 30 ; Wait for clipboard to update
+        Sleep 30 ; longer wait for clipboard to update
         Send "^v" ; Paste
-        Sleep 30
-        A_Clipboard := origClip ; Restore original clipboard
+        Sleep 30 ; longer delay after paste
         log("Character '?' was sent via clipboard paste")
     } else {
-        origClip := ClipboardAll() ; Save original clipboard
+        A_Clipboard := "" ; clear clipboard before setting new value
+        Sleep 10 ; short delay to ensure clipboard is clear
         A_Clipboard := "/"
-        Sleep 30 ; Wait for clipboard to update
+        Sleep 30 ; longer wait for clipboard to update
         Send "^v" ; Paste
-        Sleep 30
-        A_Clipboard := origClip ; Restore original clipboard
+        Sleep 30 ; longer delay after paste
         log("Character '/' was sent via clipboard paste")
     }
 }
 
-; Accent key handlers
-*´::HandleAccent("´")
-*~::HandleAccent("~")
-*^::HandleAccent("^")
+; Accent key handler functions
+HandleAccentAcute(*) {
+    HandleAccent("´")
+}
 
-; Vowel key handlers (lower only, * covers both cases, but we check Shift state)
-*a::{
+HandleAccentTilde(*) {
+    HandleAccent("~")
+}
+
+HandleAccentCircumflex(*) {
+    HandleAccent("^")
+}
+
+; Vowel key handler functions
+HandleVowelA(*) {
     HandleVowel(GetKeyState("Shift") ? "A" : "a")
 }
-*e::{
+
+HandleVowelE(*) {
     HandleVowel(GetKeyState("Shift") ? "E" : "e")
 }
-*i::{
+
+HandleVowelI(*) {
     HandleVowel(GetKeyState("Shift") ? "I" : "i")
 }
-*o::{
+
+HandleVowelO(*) {
     HandleVowel(GetKeyState("Shift") ? "O" : "o")
 }
-*u::{
+
+HandleVowelU(*) {
     HandleVowel(GetKeyState("Shift") ? "U" : "u")
 }
 
 HandleAccent(accent) {
     global waitingForAccent, accentMap
     waitingForAccent := accent
-    SetTimer(ClearAccent, -1000) ; reset in 1s
+    SetTimer(ClearAccent, -1500) ; wait before clearing accent state
 }
 
 HandleVowel(vowel) {
@@ -91,20 +129,19 @@ HandleVowel(vowel) {
     if waitingForAccent {
         combo := waitingForAccent . vowel
         if accentMap.Has(combo) {
+            waitingForAccent := "" ; clear accent state immediately
+            Send "{Backspace}" ; suppress the original key press
             char := accentMap[combo]
-            origClip := ClipboardAll()
+            A_Clipboard := "" ; clear clipboard before setting new value
+            Sleep 10 ; short delay to ensure clipboard is clear
             A_Clipboard := char
-            Sleep 30
+            Sleep 30 ; longer delay to ensure clipboard is fully updated
             Send "^v"
-            Sleep 30
-            A_Clipboard := origClip
+            Sleep 30 ; longer delay to ensure paste completes
             log("Character " char " was sent via clipboard paste")
         } else {
-            Send(vowel)
+            waitingForAccent := ""
         }
-        waitingForAccent := ""
-    } else {
-        Send(vowel)
     }
 }
 
